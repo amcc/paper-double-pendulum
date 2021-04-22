@@ -22,11 +22,25 @@ let path;
 
 let svgCount = 0;
 
+let titleText;
+let radius1Text;
+let radius2Text;
+let mass1Text;
+let mass2Text;
+let textCol = "black";
+let textSize = 20;
+let textHeight = 20;
+let textX = 50;
+let textY = 50;
+
 // Make the paper scope global, by injecting it into window:
 paper.install(window);
 window.onload = function () {
   // Setup directly from canvas id:
   paper.setup("myCanvas");
+
+  textX = paper.view.size.width - 50;
+  textY = paper.view.size.height - 50;
 
   // pendulum setup
   cx = paper.view.size.width / 2;
@@ -45,8 +59,30 @@ window.onload = function () {
   a1 = Math.PI / 2;
   a2 = Math.PI / 4;
 
+  titleText = new PointText(new Point(textX, textY));
+  radius1Text = new PointText(new Point(textX, textY + textHeight));
+  radius2Text = new PointText(new Point(textX, textY + textHeight * 2));
+  mass1Text = new PointText(new Point(textX, textY + textHeight * 3));
+  mass2Text = new PointText(new Point(textX, textY + textHeight * 4));
+  titleText.fontFamily = radius1Text.fontFamily = radius2Text.fontFamily = mass1Text.fontFamily = mass2Text.fontFamily =
+    "IBM Plex Mono";
+  titleText.justification = "right";
+
+  titleText.fillColor = textCol;
+
+  // Set the content of the text item:
+  titleText.content = `Pendulum: R:${r1.toFixed(3)}/${r2.toFixed(
+    3
+  )} M:${m1.toFixed(3)}/${m2.toFixed(3)}`;
+  // radius1Text.content = `Radius 1: ${r1.toFixed(3)}`;
+  // radius2Text.content = `Radius 2: ${r2.toFixed(3)}`;
+  // mass1Text.content = `Mass 1: ${m1.toFixed(3)}`;
+  // mass2Text.content = `Mass 2: ${m2.toFixed(3)}`;
+
   path = new Path();
+  path.smooth();
   path.strokeColor = "black";
+  // path.fullySelected = true;
 
   pendulumLayer = new paper.Layer();
   pendulumLayer.activate();
@@ -103,6 +139,7 @@ window.onload = function () {
     pen1.position = pen1Point;
     pen2.position = pen2Point;
     path.add(pen2Point);
+    path.smooth();
     // path.smooth();
     // Select the path, so we can see its segment points:
     // path.fullySelected = true;
@@ -136,6 +173,7 @@ window.onload = function () {
   t.onKeyUp = function (event) {
     if (event.character == "P") {
       pendulumLayer.remove(); // this prevents the redCircle from being drawn
+      path.smooth();
       downloadAsSVG();
       paper.project.layers.push(pendulumLayer); // now the redCircle is back
     }
